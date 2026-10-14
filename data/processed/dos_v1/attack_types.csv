@@ -1,0 +1,33 @@
+dataset,set,attack,n
+UN,pool,Benign,68992
+UN,pool,DoS,3768
+UN,unique_in_task,Benign,68992
+UN,unique_in_task,DoS,3768
+CIC,pool,Benign,250000
+CIC,pool,DoS attacks-Hulk,171932
+CIC,pool,DDOS attack-HOIC,52708
+CIC,pool,DoS attacks-GoldenEye,14812
+CIC,pool,DDoS attacks-LOIC-HTTP,9243
+CIC,pool,DDOS attack-LOIC-UDP,1195
+CIC,pool,DoS attacks-Slowloris,100
+CIC,pool,DoS attacks-SlowHTTPTest,10
+CIC,unique_in_task,Benign,1488196
+CIC,unique_in_task,DoS attacks-Hulk,311534
+CIC,unique_in_task,DDOS attack-HOIC,95740
+CIC,unique_in_task,DoS attacks-GoldenEye,27018
+CIC,unique_in_task,DDoS attacks-LOIC-HTTP,16791
+CIC,unique_in_task,DDOS attack-LOIC-UDP,2107
+CIC,unique_in_task,DoS attacks-Slowloris,188
+CIC,unique_in_task,DoS attacks-SlowHTTPTest,15
+TON,pool,Benign,250000
+TON,pool,ddos,218381
+TON,pool,dos,7833
+TON,unique_in_task,Benign,279349
+TON,unique_in_task,ddos,218381
+TON,unique_in_task,dos,7833
+BOT,pool,DoS,38724
+BOT,pool,Benign,15569
+BOT,pool,DDoS,14281
+BOT,unique_in_task,DoS,38724
+BOT,unique_in_task,Benign,15569
+BOT,unique_in_task,DDoS,14281

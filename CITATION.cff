@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use this code or these results, please cite the paper."
+title: "When features change sides: feature-label direction reversal in cross-network intrusion detection (code and results)"
+authors:
+  - family-names: Zhang
+    given-names: Haoyu
+    affiliation: "Library, Sichuan Tourism University"
+  - family-names: Wang
+    given-names: Mei
+    affiliation: "School of Artificial Intelligence, Sichuan Tourism University"
+license: MIT
+type: software

@@ -1,0 +1,81 @@
+dataset,set,attack,n
+UN,pool,Benign,68992
+UN,pool,Exploits,22797
+UN,pool,Fuzzers,7399
+UN,pool,DoS,3768
+UN,pool,Generic,2363
+UN,pool,Reconnaissance,1120
+UN,pool,Analysis,762
+UN,pool,Backdoor,679
+UN,pool,Shellcode,300
+UN,pool,Worms,63
+UN,unique_in_task,Benign,68992
+UN,unique_in_task,Exploits,22797
+UN,unique_in_task,Fuzzers,7399
+UN,unique_in_task,DoS,3768
+UN,unique_in_task,Generic,2363
+UN,unique_in_task,Reconnaissance,1120
+UN,unique_in_task,Analysis,762
+UN,unique_in_task,Backdoor,679
+UN,unique_in_task,Shellcode,300
+UN,unique_in_task,Worms,63
+CIC,pool,Benign,250000
+CIC,pool,DoS attacks-Hulk,158215
+CIC,pool,DDOS attack-HOIC,48727
+CIC,pool,DoS attacks-GoldenEye,13617
+CIC,pool,Infilteration,10692
+CIC,pool,DDoS attacks-LOIC-HTTP,8489
+CIC,pool,SSH-Bruteforce,7514
+CIC,pool,DDOS attack-LOIC-UDP,1085
+CIC,pool,Brute Force -Web,741
+CIC,pool,Brute Force -XSS,389
+CIC,pool,Bot,247
+CIC,pool,SQL Injection,163
+CIC,pool,DoS attacks-Slowloris,107
+CIC,pool,DoS attacks-SlowHTTPTest,10
+CIC,pool,FTP-BruteForce,4
+CIC,unique_in_task,Benign,1488196
+CIC,unique_in_task,DoS attacks-Hulk,311534
+CIC,unique_in_task,DDOS attack-HOIC,95740
+CIC,unique_in_task,DoS attacks-GoldenEye,27018
+CIC,unique_in_task,Infilteration,21161
+CIC,unique_in_task,DDoS attacks-LOIC-HTTP,16791
+CIC,unique_in_task,SSH-Bruteforce,14701
+CIC,unique_in_task,DDOS attack-LOIC-UDP,2107
+CIC,unique_in_task,Brute Force -Web,1496
+CIC,unique_in_task,Brute Force -XSS,793
+CIC,unique_in_task,Bot,472
+CIC,unique_in_task,SQL Injection,340
+CIC,unique_in_task,DoS attacks-Slowloris,188
+CIC,unique_in_task,FTP-BruteForce,19
+CIC,unique_in_task,DoS attacks-SlowHTTPTest,15
+TON,pool,Benign,250000
+TON,pool,ddos,70470
+TON,pool,xss,66542
+TON,pool,password,58398
+TON,pool,injection,43162
+TON,pool,scanning,7618
+TON,pool,dos,2473
+TON,pool,mitm,1099
+TON,pool,ransomware,197
+TON,pool,backdoor,41
+TON,unique_in_task,Benign,279349
+TON,unique_in_task,ddos,218381
+TON,unique_in_task,xss,205938
+TON,unique_in_task,password,180742
+TON,unique_in_task,injection,133904
+TON,unique_in_task,scanning,23860
+TON,unique_in_task,dos,7833
+TON,unique_in_task,mitm,3590
+TON,unique_in_task,ransomware,559
+TON,unique_in_task,backdoor,122
+BOT,pool,DoS,38724
+BOT,pool,Reconnaissance,26333
+BOT,pool,Benign,15569
+BOT,pool,DDoS,14281
+BOT,pool,Theft,811
+BOT,unique_in_task,DoS,38724
+BOT,unique_in_task,Reconnaissance,26333
+BOT,unique_in_task,Benign,15569
+BOT,unique_in_task,DDoS,14281
+BOT,unique_in_task,Theft,811

@@ -1,0 +1,26 @@
+{
+ "UN": {
+  "raw_positive_ratio": 0.0052006976847210964,
+  "benign_unique": 965591,
+  "positive_unique": 5048,
+  "task": "dos_family_regex"
+ },
+ "CIC": {
+  "raw_positive_ratio": 0.07401774897249884,
+  "benign_unique": 8039139,
+  "positive_unique": 642603,
+  "task": "dos_family_regex"
+ },
+ "TON": {
+  "raw_positive_ratio": 0.340045481470386,
+  "benign_unique": 969295,
+  "positive_unique": 499435,
+  "task": "dos_family_regex"
+ },
+ "BOT": {
+  "raw_positive_ratio": 0.9836312752371335,
+  "benign_unique": 10487,
+  "positive_unique": 630186,
+  "task": "dos_family_regex"
+ }
+}

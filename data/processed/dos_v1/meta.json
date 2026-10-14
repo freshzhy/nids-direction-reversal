@@ -1,0 +1,26 @@
+{
+ "UN": {
+  "raw_positive_ratio": 0.051786695986805936,
+  "benign_unique": 68992,
+  "positive_unique": 3768,
+  "task": "dos_family"
+ },
+ "CIC": {
+  "raw_positive_ratio": 0.2335164651221242,
+  "benign_unique": 1488196,
+  "positive_unique": 453393,
+  "task": "dos_family"
+ },
+ "TON": {
+  "raw_positive_ratio": 0.4474496749168749,
+  "benign_unique": 279349,
+  "positive_unique": 226214,
+  "task": "dos_family"
+ },
+ "BOT": {
+  "raw_positive_ratio": 0.7729605973109341,
+  "benign_unique": 15569,
+  "positive_unique": 53005,
+  "task": "dos_family"
+ }
+}

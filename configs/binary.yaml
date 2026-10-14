@@ -1,0 +1,4 @@
+# 第 1 轮协议（所有攻击为正类）在修正后的流程上重跑，作为“二分类 LODO 不适定”的证据
+base: ../config.yaml
+run_name: binary_v1
+task: binary

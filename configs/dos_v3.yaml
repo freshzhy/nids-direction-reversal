@@ -1,0 +1,23 @@
+# NetFlow v3 复现（RQ4）：同样 4 个测试床、不同的 NetFlow 特征表示（53 个特征）。
+# 注意：NFv3 不是 4 个新的独立网络，只用于检验结论是否依赖 NFv2 的特征提取。
+# 数据放在项目根目录：NF-UNSW-NB15-v3/、NF-CICIDS2018-v3/、NF-ToN-IoT-v3/、NF-BoT-IoT-v3/
+# （目录内任意位置的数据 CSV 都能被自动找到）
+base: ../config.yaml
+run_name: dos_v3
+datasets:
+  UN: NF-UNSW-NB15-v3
+  CIC: NF-CICIDS2018-v3
+  TON: NF-ToN-IoT-v3
+  BOT: NF-BoT-IoT-v3
+task: dos_family_regex
+task_families:
+  dos_family_regex:
+    _all: {regex: "(?i)dos"}        # 名称中含 dos/DoS/DDoS 的攻击；匹配结果写入 stats.csv 供核对
+preprocess:
+  # 与主协议相同的先验删除 + v3 新增的绝对时间戳（会让模型记住采集时间）
+  drop_identifiers: [IPV4_SRC_ADDR, IPV4_DST_ADDR, L4_SRC_PORT, L4_DST_PORT, DNS_QUERY_ID]
+  drop_patterns: ["(?i)^FLOW_(START|END)_(MILLI|MICRO|NANO)?SECONDS$", "(?i)TIMESTAMP"]
+  log1p_auto: true                  # 除类别型字段和 TTL 外全部 log1p（v3 新增的 IAT 等长尾特征）
+  raw_features: [MIN_TTL, MAX_TTL]
+reversal:
+  compare_runs: [dos_v1, binary_v1, dos_v3]

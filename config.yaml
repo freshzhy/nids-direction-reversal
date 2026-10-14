@@ -1,0 +1,159 @@
+# =====================================================================
+# SSC-FS 实验统一配置（所有脚本只从这里读取设置）
+# 路径均相对于项目根目录（本文件所在目录）
+# =====================================================================
+
+# 每个协议/特征集一个独立目录：data/processed/<run_name>/ 与 results/<run_name>/
+run_name: dos_v1
+
+paths:
+  raw_root: "."                 # 4 个 NF-*-v2 原始目录所在位置
+  processed: data/processed     # 01_preprocess.py 输出（自动追加 /<run_name>）
+  results: results              # runs.csv / selections / cache（自动追加 /<run_name>）
+
+# ---------------------------------------------------------------------
+# 任务定义（第 2 轮起的主协议：按攻击族对齐的 LODO）
+#   binary     : 所有攻击为正类（第 1 轮；4 个数据集攻击类型几乎不重叠，迁移接近随机）
+#   dos_family : 只有 DoS/DDoS 为正类，其他攻击类型剔除；4 个数据集都有这一族
+# 名称必须与 Attack 列完全一致，01_preprocess.py 会校验
+# ---------------------------------------------------------------------
+task: dos_family
+task_families:
+  dos_family:
+    UN: [DoS]
+    CIC: [DoS attacks-Hulk, DDOS attack-HOIC, DoS attacks-GoldenEye, DDoS attacks-LOIC-HTTP,
+          DDOS attack-LOIC-UDP, DoS attacks-Slowloris, DoS attacks-SlowHTTPTest]
+    TON: [dos, ddos]
+    BOT: [DoS, DDoS]
+
+# 代号 -> 原始目录名（目录下 data/<目录名>.csv）
+datasets:
+  UN: NF-UNSW-NB15-v2
+  CIC: NF-CSE-CIC-IDS2018-v2
+  TON: NF-ToN-IoT-v2
+  BOT: NF-BoT-IoT-v2
+
+# ---------------------------------------------------------------------
+# 预处理（01_preprocess.py）
+# ---------------------------------------------------------------------
+preprocess:
+  # 先验删除：端点标识（IP、端口）与事务标识（DNS_QUERY_ID）
+  # 敏感性版本 configs/sens_dnsid.yaml 保留 DNS_QUERY_ID（E7 附加分析）
+  drop_identifiers: [IPV4_SRC_ADDR, IPV4_DST_ADDR, L4_SRC_PORT, L4_DST_PORT, DNS_QUERY_ID]
+  label_col: Label
+  attack_col: Attack
+  pool_per_class: 250000    # 去重后每类最多保留的样本池
+  n_per_class: 50000        # 每个种子从池中抽取的平衡样本：每类 5 万（不足则全取，保持 1:1）
+  n_raw: 100000             # 每个种子的原始比例样本（用于 E1-B / E1-C）
+  sample_seed: 0            # 只用于构建样本池；各种子的样本由 seeds 决定
+  chunksize: 2000000        # 流式读取 CSV 的块大小（行）
+  # 长尾计数/字节/时长类特征做 log1p（负值先截断为 0，并计数记录）
+  log1p_features:
+    - IN_BYTES
+    - IN_PKTS
+    - OUT_BYTES
+    - OUT_PKTS
+    - FLOW_DURATION_MILLISECONDS
+    - DURATION_IN
+    - DURATION_OUT
+    - LONGEST_FLOW_PKT
+    - SHORTEST_FLOW_PKT
+    - MIN_IP_PKT_LEN
+    - MAX_IP_PKT_LEN
+    - SRC_TO_DST_SECOND_BYTES
+    - DST_TO_SRC_SECOND_BYTES
+    - RETRANSMITTED_IN_BYTES
+    - RETRANSMITTED_IN_PKTS
+    - RETRANSMITTED_OUT_BYTES
+    - RETRANSMITTED_OUT_PKTS
+    - SRC_TO_DST_AVG_THROUGHPUT
+    - DST_TO_SRC_AVG_THROUGHPUT
+    - NUM_PKTS_UP_TO_128_BYTES
+    - NUM_PKTS_128_TO_256_BYTES
+    - NUM_PKTS_256_TO_512_BYTES
+    - NUM_PKTS_512_TO_1024_BYTES
+    - NUM_PKTS_1024_TO_1514_BYTES
+    - TCP_WIN_MAX_IN
+    - TCP_WIN_MAX_OUT
+    - DNS_TTL_ANSWER
+  # 类别型字段：保持原值；MI 中按离散特征处理
+  categorical_features:
+    - PROTOCOL
+    - L7_PROTO
+    - TCP_FLAGS
+    - CLIENT_TCP_FLAGS
+    - SERVER_TCP_FLAGS
+    - ICMP_TYPE
+    - ICMP_IPV4_TYPE
+    - DNS_QUERY_TYPE
+    - FTP_COMMAND_RET_CODE
+
+# ---------------------------------------------------------------------
+# 通用实验设置
+# ---------------------------------------------------------------------
+seeds: [0, 1, 2, 3, 4]
+k_values: [5, 10, 15, 20]
+k_main: 10
+n_jobs: -1                 # -1 = 全部核心；XGBoost/RF 内部固定单线程
+threshold: 0.5             # 固定阈值，不在目标域调阈值
+
+# 评估分类器（固定超参数，所有特征选择方法相同）
+classifiers:
+  xgboost: {n_estimators: 300, max_depth: 6, learning_rate: 0.1}
+  rf: {n_estimators: 300}
+  mlp: {hidden_layer_sizes: [128, 64], max_iter: 200}
+
+# 特征选择内部使用的 XGBoost（SSC-FS bootstrap、SHAP-K、TREE、RFE、λ 的 LOSO）
+selector_xgb: {n_estimators: 100, max_depth: 6, learning_rate: 0.1}
+
+# ---------------------------------------------------------------------
+# SSC-FS
+# ---------------------------------------------------------------------
+ssc:
+  B: 30                    # 主实验 bootstrap 次数
+  B_max: 50                # 缓存的 bootstrap 次数（覆盖 E4 的 B 网格）
+  k0: 15
+  lambda: loso             # "loso" = 源域内 leave-one-source-out 选 λ；或填数值
+  lambda_default: 0.5      # LOSO 平局时偏向此值；m=2 时直接使用
+  lambda_grid: [0.0, 0.25, 0.5, 0.75, 1.0]
+  boot_frac: 0.5           # 每次 bootstrap 抽 n*boot_frac 行（有放回）
+  shap_max_rows: 5000      # OOB 样本中最多取多少行计算 SHAP
+  shift_max_rows: 20000    # 计算 D(j) 时每个源域最多使用的正常流量行数
+
+# ---------------------------------------------------------------------
+# 基线方法（均在合并后的源域数据上运行）
+# ---------------------------------------------------------------------
+baselines:
+  shap_max_rows: 5000      # SHAP-K 计算 SHAP 的行数
+  fit_max_rows: null       # SHAP-K / TREE 训练行数上限（null = 全部源域数据）
+  mi_max_rows: 30000
+  rfe_max_rows: 30000
+  l1_max_rows: 30000
+  l1_n_C: 30
+  stab_pool_rows: 40000    # Stability Selection 子采样池
+  stab_n_subsamples: 100   # 每次取池的一半（不放回）
+  stab_n_C: 10             # 正则化网格：l1_min_c × logspace(0, 3, n)
+
+# ---------------------------------------------------------------------
+# E4 敏感性网格（固定 λ，不做 LOSO）
+# ---------------------------------------------------------------------
+e4:
+  lambdas: [0.0, 0.25, 0.5, 0.75, 1.0]
+  Bs: [10, 30, 50]
+  k0s: [10, 15, 20]
+
+# ---------------------------------------------------------------------
+# 判别关系反转分析（r1–r4 脚本，Letter 主线）
+# ---------------------------------------------------------------------
+reversal:
+  classifiers: [lr, xgboost, mlp]   # 线性 / 树集成 / 神经网络各一个
+  train_frac: 0.7                   # 训练源域内 70/30 分层划分；30% 作为域内测试
+  flip_hi: 0.55                     # 单变量 AUC > 0.55：正向判别
+  flip_lo: 0.45                     # 单变量 AUC < 0.45：反向判别；之间视为无信息
+  rev_auc: 0.45                     # 模型级“反转”：跨域 AUC < 0.45
+  compare_runs: [dos_v1, binary_v1, dos_v3] # r4 汇总的协议（缺结果的自动跳过）
+  sensitivity: [[0.52, 0.48], [0.55, 0.45], [0.60, 0.40]]   # r5 --sens：方向阈值敏感性
+  few_n: [20, 50, 100, 200, 500]    # r6：目标域有标签流量数（每类各一半）
+  few_draws: 30                     # r6：每个 n 每个种子的随机抽取次数
+  few_eval_max: 20000               # r6：目标域评估样本上限
+  few_target_only: [lr, xgboost]    # r6 基线：直接用这 n 条目标标签训练
